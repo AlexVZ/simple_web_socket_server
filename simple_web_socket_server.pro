@@ -22,3 +22,6 @@ HEADERS  += mainwindow.h \
     simplewebsocketthread.h
 
 FORMS    += mainwindow.ui
+
+DISTFILES += \
+    LICENSE
