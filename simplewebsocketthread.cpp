@@ -78,8 +78,12 @@ void SimpleWebSocketThread::send_message(QString message)
     }
 
     QString encoded_message = tr("cmd=coded&result=ok&msg=%1").arg(m_aes256_helper.encrypt(message, m_dh_helper.get_key()));
-    m_out_window->appendPlainText(tr("Thread id: %1. Outgoing message: '%2'; encoded: '%3'").arg(m_thread_id).arg(message).arg(encoded_message));
-    m_webSocket->sendTextMessage(encoded_message);
+    if(encoded_message.size() > 0) {
+        m_out_window->appendPlainText(tr("Thread id: %1. Outgoing message: '%2'; encoded: '%3'").arg(m_thread_id).arg(message).arg(encoded_message));
+        m_webSocket->sendTextMessage(encoded_message);
+    } else {
+        m_out_window->appendPlainText(tr("Thread id: %1. Outgoing message ('%2') encode error! Message NOT sent!").arg(m_thread_id).arg(message));
+    }
 }
 
 void SimpleWebSocketThread::processTextMessage(QString incomming_message)
@@ -113,7 +117,12 @@ QString SimpleWebSocketThread::handle_request(QMap<QString, QString>  &get_args)
         return tr("cmd=begin&result=ok&%1").arg(dh_params);
     } else if(get_args[tr("cmd")] == tr("key")) {
         if(m_dh_helper.key(get_args[tr("pub_key_2")])) {
-            return tr("cmd=key&result=ok&check_msg=%1").arg(m_aes256_helper.encrypt(m_dh_helper.get_secret_string(), m_dh_helper.get_key()));
+            QString secret_string = m_dh_helper.get_secret_string();
+            if(secret_string.size() == 0) {
+                return tr("cmd=key&result=fail&error=unknown error");
+            } else {
+                return tr("cmd=key&result=ok&check_msg=%1").arg(m_aes256_helper.encrypt(secret_string, m_dh_helper.get_key()));
+            }
         } else {
             return tr("cmd=key&result=fail&error=unknown error");
         }
@@ -133,6 +142,7 @@ QString SimpleWebSocketThread::handle_request(QMap<QString, QString>  &get_args)
         } else {
             QString get_args_decrypted_str;
             if(m_aes256_helper.decrypt(get_args[tr("msg")], get_args_decrypted_str, m_dh_helper.get_key())) {
+                m_out_window->appendPlainText(tr(" thread %1 decoded message: %2").arg(m_thread_id).arg(get_args_decrypted_str));
                 QMap<QString, QString> get_args_decrypted;
                 QStringList args_res_data = get_args_decrypted_str.split(tr("&"));
                 QStringList pair_data;
