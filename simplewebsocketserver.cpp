@@ -65,7 +65,6 @@ void SimpleWebSocketServer::on_new_connection()
     m_connections_combo->addItem(tr("%1").arg(m_thread_id));
     m_out_window->appendPlainText(tr("New client connected; Thread id: %1.").arg(m_thread_id));
 
-    connect(web_socket, SIGNAL(textMessageReceived(QString)), thread, SLOT(processTextMessage(QString)));
     connect(thread, SIGNAL(finished()), this, SLOT(deleteLater()));
 
     thread->start();

@@ -35,45 +35,25 @@
 **
 ****************************************************************************/
 
-#ifndef SIMPLEWEBSOCKETTHREAD_H
-#define SIMPLEWEBSOCKETTHREAD_H
-
-#include <QThread>
-#include <QtWebSockets/QWebSocket>
-#include <QPlainTextEdit>
-#include <QTimer>
-#include <QEventLoop>
-
-#include "diffiehellmanhelper.h"
 #include "aes256helper.h"
 
-class SimpleWebSocketThread : public QThread
+AES256Helper::AES256Helper(QObject *parent) :
+    QObject(parent)
 {
-    Q_OBJECT
 
-public:
-    SimpleWebSocketThread(QPlainTextEdit *out_window, int thread_id, QWebSocket *webSocket, QObject *parent);
-    ~SimpleWebSocketThread();
+}
 
-    void run();
-    int getThreadId();
-    void send_message(QString message);
+AES256Helper::~AES256Helper()
+{
 
-signals:
+}
 
-private:
-    QPlainTextEdit *m_out_window;
-    int m_thread_id;
-    QWebSocket *m_webSocket;
-    DiffieHellmanHelper m_dh_helper;
-    AES256Helper m_aes256_helper;
-    bool m_dh_completed;
-
-    QString handle_request(QMap<QString, QString> &get_args);
-    QString proceed_request(QMap<QString, QString>  &get_args);
-
-public slots:
-    void processTextMessage(QString message);
-};
-
-#endif // SIMPLEWEBSOCKETTHREAD_H
+bool AES256Helper::decrypt(QString msg, QString &msg_decrypted, QString key)
+{
+    msg_decrypted = msg;
+    return true;
+}
+QString AES256Helper::encrypt(QString msg, QString key)
+{
+    return msg;
+}

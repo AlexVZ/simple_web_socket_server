@@ -35,45 +35,22 @@
 **
 ****************************************************************************/
 
-#ifndef SIMPLEWEBSOCKETTHREAD_H
-#define SIMPLEWEBSOCKETTHREAD_H
+#ifndef AES256HELPER_H
+#define AES256HELPER_H
 
-#include <QThread>
-#include <QtWebSockets/QWebSocket>
-#include <QPlainTextEdit>
-#include <QTimer>
-#include <QEventLoop>
+#include <QObject>
+#include <QtCore>
 
-#include "diffiehellmanhelper.h"
-#include "aes256helper.h"
-
-class SimpleWebSocketThread : public QThread
+class AES256Helper : public QObject
 {
     Q_OBJECT
 
 public:
-    SimpleWebSocketThread(QPlainTextEdit *out_window, int thread_id, QWebSocket *webSocket, QObject *parent);
-    ~SimpleWebSocketThread();
+    AES256Helper(QObject *parent = 0);
+    ~AES256Helper();
 
-    void run();
-    int getThreadId();
-    void send_message(QString message);
-
-signals:
-
-private:
-    QPlainTextEdit *m_out_window;
-    int m_thread_id;
-    QWebSocket *m_webSocket;
-    DiffieHellmanHelper m_dh_helper;
-    AES256Helper m_aes256_helper;
-    bool m_dh_completed;
-
-    QString handle_request(QMap<QString, QString> &get_args);
-    QString proceed_request(QMap<QString, QString>  &get_args);
-
-public slots:
-    void processTextMessage(QString message);
+    bool decrypt(QString msg, QString &msg_decrypted, QString key);
+    QString encrypt(QString msg, QString key);
 };
 
-#endif // SIMPLEWEBSOCKETTHREAD_H
+#endif // AES256HELPER_H

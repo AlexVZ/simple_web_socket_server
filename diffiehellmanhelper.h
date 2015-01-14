@@ -35,45 +35,36 @@
 **
 ****************************************************************************/
 
-#ifndef SIMPLEWEBSOCKETTHREAD_H
-#define SIMPLEWEBSOCKETTHREAD_H
+#ifndef DIFFIEHELLMANHELPER_H
+#define DIFFIEHELLMANHELPER_H
 
-#include <QThread>
-#include <QtWebSockets/QWebSocket>
-#include <QPlainTextEdit>
-#include <QTimer>
-#include <QEventLoop>
+#include <QObject>
+#include <QtCore>
 
-#include "diffiehellmanhelper.h"
-#include "aes256helper.h"
+#include <openssl/dh.h>
 
-class SimpleWebSocketThread : public QThread
+class DiffieHellmanHelper : public QObject
 {
     Q_OBJECT
 
 public:
-    SimpleWebSocketThread(QPlainTextEdit *out_window, int thread_id, QWebSocket *webSocket, QObject *parent);
-    ~SimpleWebSocketThread();
+    DiffieHellmanHelper(QObject *parent = 0);
+    ~DiffieHellmanHelper();
 
-    void run();
-    int getThreadId();
-    void send_message(QString message);
-
-signals:
+    QString start();
+    QString startB(QString p, QString g, QString pub_key);
+    bool key(QString pub_key_2);
+    QString get_key();
+    QString get_secret_string();
 
 private:
-    QPlainTextEdit *m_out_window;
-    int m_thread_id;
-    QWebSocket *m_webSocket;
-    DiffieHellmanHelper m_dh_helper;
-    AES256Helper m_aes256_helper;
-    bool m_dh_completed;
+    QString m_server_secret;
 
-    QString handle_request(QMap<QString, QString> &get_args);
-    QString proceed_request(QMap<QString, QString>  &get_args);
+    DH *m_private_key;
+    QString m_key;
 
-public slots:
-    void processTextMessage(QString message);
+    QString BinaryCharToHexQString(unsigned char* mem, int size);
+    int HexQStringToBinaryChar(QString src, unsigned char* mem);
 };
 
-#endif // SIMPLEWEBSOCKETTHREAD_H
+#endif // DIFFIEHELLMANHELPER_H

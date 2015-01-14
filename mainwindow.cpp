@@ -90,9 +90,5 @@ void MainWindow::pushButtonSend_clicked(bool)
         ui->statusBar->showMessage(tr("Invalid thread id; message NOT sent..."));
         return;
     }
-    if(message.size() == 0) {
-        ui->statusBar->showMessage(tr("Empty message string; message NOT sent..."));
-        return;
-    }
     emit send_to_thread(thread_id, message);
 }
