@@ -52,12 +52,12 @@ class SimpleWebSocketThread : public QThread
     Q_OBJECT
 
 public:
-    SimpleWebSocketThread(QPlainTextEdit *out_window, int thread_id, QWebSocket *webSocket, QObject *parent);
+    SimpleWebSocketThread(QPlainTextEdit *, int, QWebSocket *, QObject *);
     ~SimpleWebSocketThread();
 
     void run();
     int getThreadId();
-    void send_message(QString message);
+    void send_message(QString);
 
 signals:
 
@@ -69,11 +69,15 @@ private:
     AES256Helper m_aes256_helper;
     bool m_dh_completed;
 
-    QString handle_request(QMap<QString, QString> &get_args);
-    QString proceed_request(QMap<QString, QString>  &get_args);
+    QString handle_request(QMap<QString, QString> &);
+    QString proceed_request(QMap<QString, QString>  &);
 
 public slots:
-    void processTextMessage(QString message);
+
+private slots:
+    void is_error(QAbstractSocket::SocketError);
+    void state_changed(QAbstractSocket::SocketState);
+    void processTextMessage(QString);
 };
 
 #endif // SIMPLEWEBSOCKETTHREAD_H

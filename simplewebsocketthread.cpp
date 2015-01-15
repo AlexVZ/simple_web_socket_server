@@ -86,6 +86,18 @@ void SimpleWebSocketThread::send_message(QString message)
     }
 }
 
+void SimpleWebSocketThread::is_error(QAbstractSocket::SocketError)
+{
+    m_dh_completed = false;
+}
+
+void SimpleWebSocketThread::state_changed(QAbstractSocket::SocketState state)
+{
+    if(state == 0 || state == 6) {
+        m_dh_completed = false;
+    }
+}
+
 void SimpleWebSocketThread::processTextMessage(QString incomming_message)
 {
     m_out_window->appendPlainText(tr("thread %1 has incomming message: %2").arg(m_thread_id).arg(incomming_message));
